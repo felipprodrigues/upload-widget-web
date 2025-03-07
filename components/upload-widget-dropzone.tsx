@@ -9,7 +9,6 @@ export function UploadWidgetDropzone(){
     }
   });
 
-
   return (
     <div className="px-3 flex flex-col gap-3">
       <div
