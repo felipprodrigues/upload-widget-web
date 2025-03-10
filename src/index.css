@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @layer components {
-    .--border-angle {
+    --border-angle {
         inherits: false,
         initialValue: "0deg",
         syntax: "<angle>"
