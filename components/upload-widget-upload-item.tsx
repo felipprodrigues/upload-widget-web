@@ -2,15 +2,48 @@ import React from "react"
 import { Download, ImageUp, Link2, RefreshCcw, X } from "lucide-react";
 import { Button } from "./ui/button";
 import * as Progress from "@radix-ui/react-progress"
-import { motion } from "motion/react"
-import { Upload } from "../store/uploads";
+import { motion, progress } from "motion/react"
+import { Upload, useUploads } from "../store/uploads";
 import { formatBytes } from "../utils/format-bytes";
 
 interface UploadWidgetUploadItemProps {
-  upload: Upload
+  upload: Upload,
+  uploadId: string
 }
 
-export function UploadWidgetUploadItem({upload}: UploadWidgetUploadItemProps){
+export function UploadWidgetUploadItem({upload, uploadId}: UploadWidgetUploadItemProps){
+  const cancelUpload = useUploads(store => store.cancelUpload)
+
+  const handleUploadPercentage = (status: string) => {
+    switch(status) {
+      case 'success':
+        return {
+          text: "100%",
+          color: ''
+        };
+      case 'progress':
+        return {
+          text: "45%",
+          color: ''
+        };;
+      case 'error':
+        return {
+          text: 'Error',
+          color: 'red'
+        };
+      case 'canceled':
+        return {
+          text: 'Canceled',
+          color: 'yellow'
+        };
+      default:
+        return {
+          text:'',
+          color: ''
+        }
+    }
+  }
+
   return (
     <motion.div
       className="p-3 rounded-lg flex flex-col gap-3 shadow-shape-content bg-white/2 relative overflow-hidden"
@@ -34,32 +67,42 @@ export function UploadWidgetUploadItem({upload}: UploadWidgetUploadItemProps){
             </span>
           </span>
           <div className="size-1 rounded-full bg-zinc-700"/>
-          <span>45%</span>
+          {(() => {
+            const result = handleUploadPercentage(upload.status);
+              const { text, color } = result;
+              return <span className={`text-${color}-400`}>{text}</span>;
+            })()}
         </span>
       </div>
 
-      <Progress.Root className="bg-zinc-800 rounded-full h-1 overflow-hidden">
-        <Progress.Indicator className="bg-indigo-500 h-1" style={{ width: '43%'}}/>
+      <Progress.Root
+        className="bg-zinc-800 rounded-full h-1 overflow-hidden group"
+        data-status={upload.status}
+      >
+        <Progress.Indicator
+          className="bg-indigo-500 h-1 group-data-[status=success]:bg-green-400 group-data-[status=error]:bg-red-400 group-data-[status=canceled]:bg-yellow-400"
+          style={{ width: upload.status === 'progress' ? '43%' : '100%' }}
+        />
       </Progress.Root>
 
 
       <div className="absolute top-2.5 right-2.5 flex items-center gap-1">
-        <Button size="icon-sm">
+        <Button size="icon-sm" disabled={upload.status !== 'success'}>
           <Download className="size-4" strokeWidth={1.5}/>
           <span className="sr-only">Download compressed image</span>
         </Button>
 
-        <Button size="icon-sm">
+        <Button size="icon-sm" disabled={upload.status !== 'success'}>
           <Link2 className="size-4" strokeWidth={1.5}/>
           <span className="sr-only">Copy remote URL</span>
         </Button>
 
-        <Button size="icon-sm">
+        <Button size="icon-sm" disabled={!['canceled', 'error'].includes(upload.status)}>
           <RefreshCcw className="size-4" strokeWidth={1.5}/>
           <span className="sr-only">Retry upload</span>
         </Button>
 
-        <Button size="icon-sm">
+        <Button size="icon-sm" onClick={() => cancelUpload(uploadId)} disabled={upload.status !== 'progress'}>
           <X className="size-4" strokeWidth={1.5}/>
           <span className="sr-only">Cancel upload</span>
         </Button>
