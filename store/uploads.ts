@@ -9,7 +9,7 @@ import { compressImage } from '../utils/compress-image'
 export type Upload = {
   name: string,
   file: File,
-  abortController: AbortController,
+  abortController?: AbortController,
   status: 'progress' | 'success' | 'error' | 'canceled',
   uploadSizeInBytes: number,
   originalSizeInBytes: number,
@@ -21,6 +21,7 @@ type UploadState = {
   uploads: Map<string, Upload>,
   addUploads: (files: File[]) => void,
   cancelUpload: (uploadId: string) => void,
+  retryUpload: (uploadId: string) => void,
 }
 
 enableMapSet()
@@ -39,6 +40,16 @@ export const useUploads = create<UploadState, [['zustand/immer', never]]>(
       const upload = get().uploads.get(uploadId)
 
       if(!upload) return
+
+      const abortController = new AbortController()
+
+      updateUpload(uploadId, {
+        uploadSizeInBytes: 0,
+        compressedSizeInBytes: undefined,
+        remoteUrl: undefined,
+        abortController,
+        status: 'progress'
+      })
 
       try {
         const compressedFile = await compressImage({
@@ -61,7 +72,7 @@ export const useUploads = create<UploadState, [['zustand/immer', never]]>(
               })
             }
           },
-          { signal: upload.abortController.signal }
+          { signal: abortController.signal }
         )
 
         updateUpload(uploadId, {
@@ -92,15 +103,21 @@ export const useUploads = create<UploadState, [['zustand/immer', never]]>(
       upload.abortController.abort()
     }
 
+    function retryUpload(uploadId: string) {
+      const upload = get().uploads.get(uploadId)
+
+      if(!upload) return
+
+      processUpload(uploadId)
+    }
+
     function addUploads(files: File[]) {
       for (const file of files) {
         const uploadId = crypto.randomUUID()
-        const abortController = new AbortController()
 
         const upload: Upload = {
           name: file.name,
           file,
-          abortController,
           status: 'progress',
           originalSizeInBytes: file.size,
           uploadSizeInBytes: 0,
@@ -117,7 +134,8 @@ export const useUploads = create<UploadState, [['zustand/immer', never]]>(
     return {
       uploads: new Map(),
       addUploads,
-      cancelUpload
+      cancelUpload,
+      retryUpload
     }
 }))
 
