@@ -1,50 +1,75 @@
-# React + TypeScript + Vite
+# Upload Widget Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Description
+This is an image upload widget application. In addition to the main upload flow for storage in Cloudflare R2, it explores several other features to make the widget highly functional. These include compression, conversion, resizing, animations, cancellation, retry mechanisms, downloading, and sharing links. Finally, we handle most of these processes entirely on the front-end, reducing the load on the back-end and storage systems.
 
-Currently, two official plugins are available:
+## UI Preview
+![Screenshot 2025-03-21 at 8 48 32 AM](https://github.com/user-attachments/assets/0a5f7218-8cf6-421c-b602-17afa29e183c)
+![Screenshot 2025-03-21 at 8 37 12 AM](https://github.com/user-attachments/assets/37d17320-a17d-44a8-b872-a5a269eacd66)
+![Screenshot 2025-03-21 at 8 41 55 AM](https://github.com/user-attachments/assets/bc0aa590-55fb-464a-89cc-b9353faaded8)
+![Screenshot 2025-03-21 at 8 39 02 AM](https://github.com/user-attachments/assets/38c578b7-a888-48c8-8e51-659f2a566ef7)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Overview
+This project is a web application built using React, Vite, and TailwindCSS. It is managed using `pnpm` and includes ESLint for linting. The application follows a modular structure with Zustand for state management and Radix UI for UI components.
 
-## Expanding the ESLint configuration
+## Prerequisites
+Before running the project, ensure you have the following installed:
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- [Node.js](https://nodejs.org/) (Recommended version: LTS)
+- [pnpm](https://pnpm.io/) (Package Manager)
 
-- Configure the top-level `parserOptions` property like this:
+### Node.js Version
+This project requires Node.js version **20.18.2**. The `.nvmrc` file ensures the correct version is used. If you use `nvm`, you can run the following command to automatically switch to the required version:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```sh
+nvm use
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+If you don’t have the correct version installed, run:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```sh
+nvm install 20.18.2
 ```
+
+## Installation
+Clone the repository and install dependencies using `pnpm`:
+
+```sh
+pnpm install
+```
+
+## Running the Development Server
+To start the development server, use:
+
+```sh
+pnpm run dev
+```
+
+## Building for Production
+To create a production build, run:
+
+```sh
+pnpm run build
+```
+
+## Previewing the Build
+To preview the production build locally:
+
+```sh
+pnpm run preview
+```
+
+## Dependencies
+The project includes the following key dependencies:
+
+- **React**: Frontend library
+- **Vite**: Development and build tool
+- **TailwindCSS**: Utility-first CSS framework
+- **Zustand**: State management
+- **Radix UI**: UI primitives
+- **Axios**: HTTP client
+- **Lucide React**: Icon library
+- **Immer**: Immutable state management
+
+
+
